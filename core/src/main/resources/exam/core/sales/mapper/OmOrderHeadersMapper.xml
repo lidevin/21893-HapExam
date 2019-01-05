@@ -11,5 +11,8 @@
         <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL" />
     </resultMap>
 
+    <select id="maxId" resultType="java.lang.Long">
+        select max(HEADER_ID) from hap_om_order_headers
+    </select>
 
 </mapper>

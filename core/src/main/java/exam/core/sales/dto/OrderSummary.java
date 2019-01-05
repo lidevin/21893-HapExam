@@ -1,11 +1,7 @@
 package exam.core.sales.dto;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,9 +25,11 @@ public class OrderSummary implements Serializable {
     @Length(max = 30)
     private String orderStatus; //订单状态
     private Long orderMoney;//订单金额
+
     private Long inventoryItemId; //物料ID
     @Length(max = 60)
     private String itemCode; //物料编码
+
 
     public Long getCompanyId() {
         return companyId;

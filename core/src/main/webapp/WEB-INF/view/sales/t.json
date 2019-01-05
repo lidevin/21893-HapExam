@@ -1,0 +1,144 @@
+[
+  {
+    "encoded": true,
+    "hidden": true,
+    "field": "lineId",
+    "attributes": {
+      "style": "display:none"
+    },
+    "footerAttributes": {
+      "style": "display:none"
+    },
+    "headerAttributes": {
+      "id": "b87e2ab9-461a-4701-ba7c-3865883940ce",
+      "style": "display:none"
+    }
+  },
+  {
+    "encoded": true,
+    "field": "lineNumber",
+    "title": "行号",
+    "attributes": {
+      "style": "text-align:center"
+    },
+    "headerAttributes": {
+      "id": "988c01b5-06d9-4909-873f-b063238bdae5",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;"
+    },
+    "width": 120
+  },
+  {
+    "encoded": true,
+    "hidden": true,
+    "field": "inventoryItemId",
+    "attributes": {
+      "style": "display:none"
+    },
+    "footerAttributes": {
+      "style": "display:none"
+    },
+    "headerAttributes": {
+      "id": "74073dac-54f7-4554-9ca2-88e0067ab09a",
+      "style": "display:none"
+    }
+  },
+  {
+    "encoded": true,
+    "field": "itemCode",
+    "title": "物料编码",
+    "attributes": {
+      "style": "text-align:center"
+    },
+    "headerAttributes": {
+      "id": "66c2d012-48da-4121-865e-7086d5babb54",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;"
+    },
+    "width": 120
+  },
+  {
+    "encoded": true,
+    "field": "itemDescription",
+    "title": "物料描述",
+    "attributes": {
+      "style": "text-align:center"
+    },
+    "headerAttributes": {
+      "id": "428f515f-ac93-445a-8fd9-be0496fba803",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;"
+    },
+    "width": 120
+  },
+  {
+    "encoded": true,
+    "field": "orderQuantityUom",
+    "title": "产品单位",
+    "attributes": {
+      "style": "text-align:center"
+    },
+    "headerAttributes": {
+      "id": "f45d90de-f9d2-448b-afd3-ab4e7ef6416c",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;"
+    },
+    "width": 120
+  },
+  {
+    "encoded": true,
+    "field": "orderdQuantity",
+    "title": "数量",
+    "attributes": {
+      "style": "text-align:center"
+    },
+    "headerAttributes": {
+      "id": "21ad161a-aed8-405b-9117-0fe8b3b7ed69",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;"
+    },
+    "width": 120
+  },
+  {
+    "encoded": true,
+    "field": "unitSellingPrice",
+    "title": "销售单价",
+    "attributes": {
+      "style": "text-align:center"
+    },
+    "headerAttributes": {
+      "id": "fddfdbe6-9564-4096-aca6-e8242b38dae7",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;"
+    },
+    "width": 120
+  },
+  {
+    "encoded": true,
+    "field": "itemsMoney",
+    "title": "金额",
+    "attributes": {
+      "style": "text-align:center"
+    },
+    "headerAttributes": {
+      "id": "e835d1cf-ae4e-46ae-9802-3b00de8a31b7",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;"
+    },
+    "width": 120
+  },
+  {
+    "encoded": true,
+    "field": "description",
+    "title": "描述",
+    "attributes": {
+      "style": "text-align:center;"
+    },
+    "headerAttributes": {
+      "id": "ac889cf8-b31f-4b5a-a65e-126469d5f5e9",
+      "class": "table-header-cell",
+      "style": "text-align: center;background-color: #F1F1F1;border-right:0px;padding-right: 0px;"
+    },
+    "width": 120
+  }
+]

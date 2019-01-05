@@ -17,7 +17,35 @@
         <result column="ADDITION3" property="addition3" jdbcType="VARCHAR" />
         <result column="ADDITION4" property="addition4" jdbcType="VARCHAR" />
         <result column="ADDITION5" property="addition5" jdbcType="VARCHAR" />
+
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_DESCRIPTION" property="itemDescription" jdbcType="VARCHAR" />
+        <result column="ITEMS_MONEY" property="itemsMoney" jdbcType="DECIMAL" />
     </resultMap>
 
+    <select id="get" parameterType="exam.core.sales.dto.OrderSummary" resultMap="BaseResultMap">
+        select
+        iii.INVENTORY_ITEM_ID,iii.ITEM_CODE,iii.ITEM_DESCRIPTION,(orl.ORDERD_QUANTITY*orl.UNIT_SELLING_PRICE) as ITEMS_MONEY,
+        orl.LINE_NUMBER,orl.LINE_ID,orl.HEADER_ID,orl.ORDERD_QUANTITY,orl.ORDER_QUANTITY_UOM,orl.UNIT_SELLING_PRICE,orl.DESCRIPTION,
+        orl.ADDITION1,orl.ADDITION2,orl.ADDITION3,orl.ADDITION4,orl.ADDITION5
+        from
+        hap_om_order_lines orl,
+        hap_inv_inventory_items iii
+        where orl.INVENTORY_ITEM_ID = iii.INVENTORY_ITEM_ID
+        and orl.HEADER_ID=#{headerId,jdbcType=DECIMAL}
+    </select>
+    <!--and orl.HEADER_ID
+    exists (select 1 from hap_om_order_headers orh
+    <where>
+        orh.HEADER_ID=orl.HEADER_ID
+        <if test="headerId != null">and orh.HEADER_ID=#{headerId,jdbcType=DECIMAL}</if>
+        <if test="orderNumber != null">and orh.ORDER_NUMBER=#{orderNumber,jdbcType=VARCHAR}</if>
+    </where>)-->
+    <select id="maxId" resultType="java.lang.Long">
+        select max(LINE_ID) from hap_om_order_lines
+    </select>
 
+    <delete id="deleteByHeaderId">
+        delete from hap_om_order_lines where HEADER_ID=#{headerId,jdbcType=DECIMAL}
+    </delete>
 </mapper>

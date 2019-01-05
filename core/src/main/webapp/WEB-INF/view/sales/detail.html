@@ -1,76 +1,454 @@
 <#include "../include/header.html">
-<script type="text/javascript">
-    var viewModel = Hap.createGridViewModel("#grid");
-</script>
+<script src="${base.contextPath}/common/code?orderStatusData=HAP_OM_ORDER_STATUS" type="text/javascript"></script>
 <body>
 <div id="page-content">
-    <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
-        <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:create"><@spring.message "hap.new"/></span>
-        <span class="btn btn-success k-grid-save-changes" data-bind="click:save" style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
-        <span  data-bind="click:remove" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
-    </div>
-    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
-    <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "OrgCompanys.companyName"/>'
-                   data-bind="value:model.companyName" class="k-textbox">
-        <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
+    <div class="col-md-12" id="header-form" data-role="validator" style="padding-bottom:10px;">
+        <input type="hidden" data-bind="value:model.headerId">
+        <div style="margin-top: 10px;line-height: 30px;height: 30px;">
+            <div>
+                <span class="col-md-2 text-right" style="padding-right: 10px;"><@spring.message "OmOrderHeader.orderNumber"/></span>
+                <div class="col-md-2" style="padding: 0px;">
+                    <input id="orderNumber"  type="text" required class="k-textbox" readonly="readonly"
+                            validationMessage='<@spring.message "OmOrderHeader.orderNumberValidationMessage"/>'
+                            data-bind="value:model.orderNumber" >
+                </div>
+            </div>
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "OrgCompany.companyName"/></span>
+                <div class="col-md-3">
+                    <input id="companyId" type="text" style="width:100%;"
+                           required validationMessage='<@spring.message "OmOrderHeader.companyNameValidationMessage"/>'
+                           data-bind="value:model.companyId,text:model.companyName" >
+                </div>
+            </div>
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "ArCustomer.customerName"/></span>
+                <div class="col-md-3">
+                    <input id="customerId" type="text" style="width:100%;" readonly="readonly"
+                           required validationMessage='<@spring.message "OmOrderHeader.customerNameValidationMessage"/>'
+                           data-bind="value:model.customerId,text:model.customerName" >
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;margin-left: 0px ;line-height: 30px;height: 30px;">
+            <div>
+                <span class="col-md-2 text-right" style="padding-right: 10px;"><@spring.message "OmOrderHeader.orderDate"/></span>
+                <!--<input  type="date" required class="col-md-2" data-role="dateinput"
+                        data-bind="value:model.orderDate" >-->
+                <div class="col-md-2" style="padding-left: 0px">
+                <input type="date" id="orderDate" autocomplete="off" data-role="datepicker"
+                       required validationMessage='<@spring.message "OmOrderHeader.orderDateValidationMessage"/>'
+                       data-bind="value:model.orderDate"  >
+            </div>
+            </div>
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "OmOrderHeader.orderMoney"/></span>
+                <div class="col-md-3" >
+                    <input id="orderMoney" type="text" style="width:100%;" class="k-textbox k-state-disabled" readonly="readonly"
+                           data-bind="value:model.orderMoney" >
+                </div>
+            </div>
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "OmOrderHeader.orderStatus"/></span>
+                <div class="col-md-3" >
+                    <input id="orderStatus" type="text"  style="width: 100%;" class="k-state-disabled"
+                            data-bind="value: model.orderStatus"/>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-12" style="margin-top: 10px">
+            <div id="header-btn-group" class="col-md-8 text-right">
+                <span id="header-btn-save" class="btn btn-default" data-bind="click:save"><@spring.message "hap.save"/></span>
+                <span id="header-btn-submit" class="btn btn-default" data-bind="click:submit"><@spring.message "hap.submit"/></span>
+                <span id="header-btn-approve" class="btn btn-default" data-bind="click:approve"><@spring.message "sales.order.detail.approve"/></span>
+                <span id="header-btn-reject" class="btn btn-default" data-bind="click:reject"><@spring.message "sales.order.detail.reject"/></span>
+                <span id="header-btn-del" class="btn btn-default" data-bind="click:del"><@spring.message "sales.order.detail.del"/></span>
+                <span id="header-btn-print" class="btn btn-default" data-bind="click:print"><@spring.message "sales.order.detail.print"/></span>
+                <span id="header-btn-back" class="btn btn-default" data-bind="click:back"><@spring.message "hap.back"/></span>
+            </div>
+        </div>
         <div style="clear:both"></div>
     </div>
-    <script>kendo.bind($('#query-form'), viewModel);</script>
     <div style="clear:both">
-        <div id="grid"></div>
     </div>
-</div>
+    <div>
+        <ul class="nav nav-tabs">
+            <li id="main-nav" class="active"><a href="javascript:changeTab('#other', '#main')" data-toggle="tab"><@spring.message "sales.order.detail.main"/></a></li>
+            <li id="other-nav" class=""><a href="javascript:changeTab('#main', '#other')" data-toggle="tab"><@spring.message "sales.order.detail.other"/></a></li>
+        </ul>
+        <div class="tab-content">
+            <!--style="background-color: #F1F1F1" header-->
+            <!--<div class="tab-pane fade in active" style="margin-top: 20px;" id="personal">-->
+            <div id="grid-btn-group" style="background-color: #F9F9F9;border: 1px solid #DBDBDB;border-top: 3px solid #DBDBDB;border-bottom: 0;">
+                <span class="btn" style="width:70px" onclick="create()" type="submit"><i class="fa fa-plus-circle" style="color: #55C434"></i><@spring.message "hap.add"/></span>
+                <span class="btn" style="width:70px" onclick="save()" type="button"><i class="fa fa-save" style="color: #55C434"></i><@spring.message "hap.save"/></span>
+                <span class="btn" style="width:70px" onclick="remove()" type="submit"><i class="fa fa-minus-circle" style="color: #E45244;"></i><@spring.message "hap.delete"/></span>
+            </div>
+            <div class="tab-pane fade in active" id="main-grid">
+            </div>
+            <div class="tab-pane fade in" id="other-grid">
+            </div>
+        </div>
+    </div>
 
+</div>
 <script type="text/javascript">
-    Hap.initEnterQuery('#query-form', viewModel.query);
-    var BaseUrl = _basePath;
-    dataSource = new kendo.data.DataSource({
+    $("#companyId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale,"LOV_SALES_COMPANYS")},{
+        query: function (e) {
+            e.param['enabledFlag'] = 'Y';
+        },
+        change: function () {
+            viewModelHeader.model.set('customerId', null);
+            $("#customerId").data("kendoLov").enable(true);
+        }
+    }));
+    $("#customerId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale,"LOV_SALES_CUSTOMERS")}, {
+        query: function (e) {
+            e.param['enabledFlag'] = 'Y';
+            var companyLov = $('#companyId').data('kendoLov');
+            if(companyLov.value()){
+                e.param['companyId'] = companyLov.value();
+            }
+        }
+    }));
+    $("#orderDate").kendoDatePicker({
+        animation: {
+            close: {},
+            open: {}
+        },
+        min: formatDate(new Date(2015,12, 1), "yyyy-MM-dd HH:mm:ss"),
+        dateInput: true,
+        format: "{0:yyyy-MM-dd}",
+        change: function(){}
+    });
+
+    $("#orderDate").data("kendoDatePicker").element[0].disabled=true;
+    var curGridEle = $("#main-grid");
+    var canEdit = false;
+    var lineEdit;
+    var viewModelHeader = kendo.observable({
+        model: {},
+        save: function() {
+            if(!$("#header-btn-save").attr("disabled")){
+                editHeader();
+            }
+        },
+        submit: function(){
+            if(!$("#header-btn-submit").attr("disabled")){
+                editHeader("SUBMITED");
+            }
+        },
+        approve: function(){
+            if(!$("#header-btn-approve").attr("disabled")){
+                editHeader("APPROVED");
+            }
+        },
+        reject : function(){
+            if(!$("#header-btn-reject").attr("disabled")){
+                editHeader("REJECTED");
+            }
+        },
+        del: function(){
+            if(!$("#header-btn-del").attr("disabled")){
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: $l('hap.tip.delete_confirm')
+                }).done(function (event) {
+                    $.post("${base.contextPath}/sales/detail/delete", {headerId:viewModelHeader.model.headerId}, function (args) {
+                        if(args.success){
+                            Hap.showToast({
+                                type:'success',
+                                message: $l('hap.tip.success')
+                            });
+                            setTimeout(function () {
+                                window.parent.$("#mainTab").data("kendoTabStrip").closeTab("SALES_ORDER_DETAIL");
+                            }, 1500 );
+                        }else{
+                            kendo.ui.showErrorDialog({
+                                title: $l('hap.error'),
+                                width: 400,
+                                message: args.message
+                            })
+                        }
+                    });
+                })
+            }
+        },
+        print: function(){
+            //TODO  打印
+            // $("#main-grid").data('kendoGrid').saveAsPDF();
+            var data = {
+                header: viewModelHeader.model,
+                lines: $("#main-grid").data("kendoGrid").dataSource.data()
+            };
+            var template = kendo.template($("#page-template").html());
+            var result = template(data);
+            $("#main-data").html(result);
+
+            console.log($("#print-page").html());
+            kendo.drawing.drawDOM($("#print-page"))
+                .then(function(group) {
+                    group.options.set("pdf", {
+                        paperSize: "A3",
+                        title: 'Order Detail',
+                        date: new Date(),
+                        margin: {
+                            left   : "10mm",
+                            top    : "10mm",
+                            right  : "10mm",
+                            bottom : "10mm"
+                        }
+                    });
+                    kendo.drawing.pdf.saveAs(group, "Order Detail.pdf")
+                });
+        },
+        back: function (){
+            eval(parent.$("#link_SALES_ORDER_SUMMARY").attr("href").replace("openTab","parent.openTab"));
+        }
+    });
+    kendo.bind($('#header-form'), viewModelHeader);
+    if ('${RequestParameters.headerId!0}'!=0) { //headerId = '${RequestParameters.headerId!0}'
+        canEdit = true;
+        // $("#header-form").attr("disabled", "disabled");
+
+        $.post('${base.contextPath}/sales/detail/query', {headerId: '${RequestParameters.headerId!0}'}, function (args) {
+            loadHeaderData(args);
+            $("#main-grid").data("kendoGrid").setDataSource(dataSourceGrid);
+            //设置话
+            $("#other-grid").data("kendoGrid").setDataSource(dataSourceGrid);
+        });
+    }else{
+        viewModelHeader.set("orderStatus", "NEW");
+        initOrderStatus("NEW");
+        viewModelHeader.model.set("orderNumber", randomOrderNumber());
+        viewModelHeader.model.set("orderDate", new Date());
+        viewModelHeader.model.set("orderMoney", "0.00");
+        headerNewOrRejectedStatus();
+        $("#customerId").data("kendoLov").enable(false);
+    }
+
+    dataSourceGrid = new kendo.data.DataSource({
         transport: {
             read: {
-                url: BaseUrl + "/hap/org/companys/query",
+                url: '${base.contextPath}/sales/detail/items',
                 type: "POST",
                 dataType: "json"
             },
             update: {
-                url: BaseUrl + "/hap/org/companys/submit",
+                url: '${base.contextPath}/sales/detail/items/submit',
                 type: "POST",
                 contentType: "application/json"
             },
             destroy: {
-                url: BaseUrl + "/hap/org/companys/remove",
+                url: '${base.contextPath}/sales/detail/items/remove',
                 type: "POST",
                 contentType: "application/json"
             },
             create: {
-                url: BaseUrl + "/hap/org/companys/submit",
+                url: '${base.contextPath}/sales/detail/items/submit',
                 type: "POST",
                 contentType: "application/json"
             },
             parameterMap: function (options, type) {
+                if(canEdit == false) return {headerId:0};
                 if (type !== "read" && options.models) {
-                    var datas = Hap.prepareSubmitParameter(options, type)
+                    var datas = Hap.prepareSubmitParameter(options, type);
+                    $.each(datas, function (i, r) {
+                        r['headerId'] = viewModelHeader.model.headerId || '${RequestParameters.headerId!0}';
+                        r['companyId'] = viewModelHeader.model.companyId;
+                        r['itemsMoney'] = formatMoneyCent(r['itemsMoney']);
+                        r['unitSellingPrice'] = formatMoneyCent(r['unitSellingPrice']);
+                    });
                     return kendo.stringify(datas);
                 } else if (type === "read") {
-                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    return Hap.prepareQueryParameter({headerId: '${RequestParameters.headerId!0}'}, options)
                 }
             }
         },
         batch: true,
         serverPaging: true,
         pageSize: 10,
+
         schema: {
             data: 'rows',
             total: 'total',
             model: {
-                id: "companyId",
-                fields: {}
+                id: "lineId",
+                fields: {
+                    lineNumber: {validation: {required: true}},
+                    inventoryItemId: {type: "string"},
+                    itemCode: {validation: {required: true}},
+                    itemDescription: {type: "string"},
+                    orderQuantityUom: {type: "string"},
+                    orderdQuantity: {type: "number", validation: {required: true}},
+                    /*orderdQuantity:{
+                        validation: {
+                            required: true,
+                            validation: function (input) {
+                                if(input.val() > 0){
+                                    return true;
+                                }else{
+                                    return false;
+                                }
+                            },
+                            validationMessage:'<@spring.message "OmOrderLines.orderdQuantity.validation"/>'
+                        }
+                    },*/
+                    unitSellingPrice: {validation: {required: true}},
+                    itemsMoney: {type: "string"},
+                    description: {validation: {required: true}}
+                },
+                editable: function () {
+                    return lineEdit;
+                }
+            },
+            parse: function(response) {
+                var rows = response.rows || [];
+                for (var i = 0; i < rows.length; i++) {
+                    rows[i].unitSellingPrice = formatMoney(rows[i].unitSellingPrice);
+                    rows[i].itemsMoney = formatMoney(rows[i].itemsMoney);
+                }
+                return response;
             }
         }
     });
+    $("#main-grid").kendoGrid({
+        resizable: true,
+        scrollable: false,
+        navigatable: true,
+        selectable: "multiple, rowbox",
+        dataBound: function () {
+            if (parent.autoResizeIframe) {
+                parent.autoResizeIframe('${RequestParameters.functionCode!}')
+            }
+        },
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "lineId",
+                hidden: true
+            },
+            {
+                field: "lineNumber",
+                title: '<@spring.message "OmOrderLines.lineNumber"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editor: function (container, options) {
+                    $('<span>').text(options.model.get('lineNumber')).appendTo(container);
+                },
+                width: 120
+            },
+            {
+                field: "inventoryItemId",
+                hidden: true
+            },{
+                field: "itemCode",
+                title: '<@spring.message "OmOrderLines.itemCode"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editor: function(container, options) {
+                    var input = $("<input/>");
+                    input.attr("name", options.field);
+                    input.appendTo(container);
+                    input.kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale,"LOV_SALES_INVENTORY_ITEMCODE")},{
+                        select: function (e) {
+                            options.model.set('itemCode', e.item['itemCode']);
+                            options.model.set("inventoryItemId", e.item['inventoryItemId']);
+                            options.model.set("itemDescription", e.item['itemDescription']);
+                            options.model.set('orderQuantityUom', e.item['itemUom']);
+                        }
+                    }));
+                },
+                width: 120
+            },{
+                field: "itemDescription",
+                title: '<@spring.message "OmOrderLines.itemDescription"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editor: function (container, options) {
+                    $('<span>').text(options.model.get('itemDescription')).appendTo(container);
+                },
+                width: 120
+            },{
+                field: "orderQuantityUom",
+                title: '<@spring.message "OmOrderLines.orderQuantityUom"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editor: function (container, options) {
+                    $('<span>').text(options.model.get('orderQuantityUom')).appendTo(container);
+                },
+                width: 120
+            },{
+                field: "orderdQuantity",
+                title: '<@spring.message "OmOrderLines.orderdQuantity"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editor: function (container, options) {
+                    $('<input required name="'+options.field+'"/>')
+                        .appendTo(container).kendoNumericTextBox({
+                        decimals: 0,
+                        min: 1,
+                        change: function(){
+                            var unitSellingPrice = options.model['unitSellingPrice'];
+                            console.log("unitSellingPrice = " + unitSellingPrice + "     orderdQuantity=" + this.value());
+                            if(unitSellingPrice=="" && this.value()==""){
+                                var itemsMoney = unitSellingPrice * this.value();
+                                options.model.set('itemsMoney',  itemsMoney.toFixed(2));
+                                calcMoney();
+                            }
+                        }
 
-    $("#grid").kendoGrid({
-        dataSource: dataSource,
+                    });
+                },
+                width: 120
+            },{
+                field: "unitSellingPrice",
+                title: '<@spring.message "OmOrderLines.unitSellingPrice"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editor: function (container, options) {
+                    $('<input required name="'+options.field+'"/>')
+                        .appendTo(container).kendoNumericTextBox({
+                        decimals: 2,
+                        min: 0.00,
+                        change: function(){
+                            var orderdQuantity = options.model['orderdQuantity'];
+                            if(orderdQuantity != "" && this.value() != ""){
+                                var itemsMoney = orderdQuantity * this.value();
+                                options.model.set('unitSellingPrice',  Number(this.value()).toFixed(2));
+                                options.model.set('itemsMoney',  itemsMoney.toFixed(2));
+                                calcMoney();
+                            }
+                        }
+
+                    });
+                },
+                width: 120
+            },{
+                field: "itemsMoney",
+                title: '<@spring.message "OmOrderLines.itemsMoney"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editor: function (container, options) {
+                    $('<span>').text(options.model.get('itemsMoney')).appendTo(container);
+                },
+                width: 120
+            },{
+                field: "description",
+                title: '<@spring.message "OmOrderLines.description"/>',
+                attributes: {style: "text-align:center;"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;border-right:0px;padding-right: 0px;"},
+                width: 120
+            }
+        ],
+        editable: true
+    });
+    $("#other-grid").kendoGrid({
         resizable: true,
         scrollable: true,
         navigatable: false,
@@ -87,29 +465,473 @@
         },
         columns: [
             {
-                field: "companyId",
-                title: '<@spring.message "orgcompanys.companyid"/>',
+                field: "lineId",
+                hidden: true
+            },
+            {
+                field: "lineNumber",
+                title: '<@spring.message "OmOrderLines.lineNumber"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                editable: false,
                 width: 120
             },
-                    {
-                field: "companyNumber",
-                title: '<@spring.message "orgcompanys.companynumber"/>',
+            {
+                field: "addition1",
+                title: '<@spring.message "OmOrderLines.addition1"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
                 width: 120
             },
-                    {
-                field: "companyName",
-                title: '<@spring.message "orgcompanys.companyname"/>',
+            {
+                field: "addition2",
+                title: '<@spring.message "OmOrderLines.addition2"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
                 width: 120
             },
-                    {
-                field: "enabledFlag",
-                title: '<@spring.message "orgcompanys.enabledflag"/>',
+            {
+                field: "addition3",
+                title: '<@spring.message "OmOrderLines.addition3"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
                 width: 120
             },
+            {
+                field: "addition4",
+                title: '<@spring.message "OmOrderLines.addition4"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                width: 120
+            },
+            {
+                field: "addition5",
+                title: '<@spring.message "OmOrderLines.addition5"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {"class": "table-header-cell",style:"text-align: center;background-color: #F1F1F1;"},
+                width: 120
+            }
         ],
         editable: true
     });
+    //////////////定义方法////////////////////
+    /**
+     * 创建行
+     **/
+    function create(){
+        if(canEdit==false){
+            Hap.showToast({
+                type:'warning',
+                message: '<@spring.message "sales.orderHeaderCreate.warning"/>',
+                timeOut: "2300"
+            })
+            return;
+        }
+        if(lineEdit == false){
+            return ;
+        }
+        var grid = $("#main-grid").data("kendoGrid");
+        var rowsLen = grid.items().length;
+        var maxLineNumber = 0;
+        for(var i = 0; i < rowsLen; i++){
+            var curLineNumber = grid.dataItem("tbody tr:eq("+ i +")").lineNumber;
+            if(curLineNumber > maxLineNumber){
+                maxLineNumber = curLineNumber;
+            }
+        }
+        grid.addRow();
+        grid.dataItem(grid.tbody.find("tr:eq(0)")).set("lineNumber",maxLineNumber+1);
+        $(grid.items()[0]).find("td:eq(2)").text(maxLineNumber+1);
+    }
+    /**
+     * 保存行信息
+     */
+    function save(){
+        if(lineEdit == false){
+            return ;
+        }
+        curGridEle.data('kendoGrid').saveChanges();
+    }
+    /**
+     * 删除行信息
+     */
+    function remove(){
+        if(lineEdit == false){
+            return ;
+        }
+        Hap.deleteGridSelection({
+            grid: curGridEle
+        });
+    }
 
+    /**
+     * 计算总金额并显示
+     */
+    function calcMoney(){
+        //计算总金额
+        var mainGrid = $("#main-grid").data("kendoGrid");
+        var rowsLen = mainGrid.items().length;
+        var orderMoney = 0;
+        for(var i = 0; i < rowsLen; i++){
+            orderMoney += parseFloat(mainGrid.dataItem("tbody tr:eq("+ i +")").itemsMoney);
+        }
+        // viewModelHeader.model.orderMoney = orderMoney;
+        viewModelHeader.model.set("orderMoney", Number(orderMoney).toFixed(2));
+        // $("#orderMoney").val(formatMoney(formatMoneyCent(viewModelHeader.model.orderMoney)));
+    }
+    /**
+     * 新建  或  已拒绝
+     **/
+    function headerNewOrRejectedStatus() {
+        setHeaderEnable(true);
+        $("#header-btn-save").attr("disabled", false);
+        $("#header-btn-submit").attr("disabled", false);
+        $("#header-btn-approve").attr("disabled", true);
+        $("#header-btn-reject").attr("disabled", true);
+        $("#header-btn-del").attr("disabled", false);
+    }
+    /**
+     * 已提交
+     */
+    function headerSubmitedStatus() {
+        setHeaderEnable(false);
+        $("#header-btn-save").attr("disabled", true);
+        $("#header-btn-submit").attr("disabled", true);
+        $("#header-btn-approve").attr("disabled", false);
+        $("#header-btn-reject").attr("disabled", false);
+        $("#header-btn-del").attr("disabled", true);
+    }
+    /**
+     * 已审批
+     */
+    function headerApprovedStatus() {
+        setHeaderEnable(false);
+        $("#header-btn-save").attr("disabled", true);
+        $("#header-btn-submit").attr("disabled", true);
+        $("#header-btn-approve").attr("disabled", true);
+        $("#header-btn-reject").attr("disabled", true);
+        $("#header-btn-del").attr("disabled", true);
+    }
+    /**
+     * 表单只读
+     */
+    function setHeaderEnable(flag) {
+        if(flag){
+            $("orderNumber").addClass("k-state-disabled");
+        }else{
+            $("orderNumber").removeClass("k-state-disabled");
+        }
+        $("#companyId").data("kendoLov").enable(flag);
+        $("#customerId").data("kendoLov").enable(flag);
+        $("#orderDate").data("kendoDatePicker").enable(flag);
+        // $("#main-grid").data("kendoGrid").dataSource.editable = false;
+        lineEdit = flag;
+        // console.log($("#main-grid").data("kendoGrid"));
+    }
+    /**
+     * 提交订单头数据
+     */
+    function editHeader(orderStatus){
+        var data = viewModelHeader.model.toJSON();
+        data.orderStatus = orderStatus || "NEW";
+        if(canEdit == false){
+            data.orderDate = formatDate(data.orderDate, "yyyy-MM-dd HH:mm:ss");
+            data['__status'] = 'add';
+        }else{
+            data['__status'] = 'update';
+        }
+        var validator = $("#header-form").kendoValidator().data("kendoValidator");
+        if (validator.validate()) {
+            $.post("${base.contextPath}/sales/detail/submit", data, function (args) {
+                if(args.success){
+                    loadHeaderData(args);
+                    if(canEdit == false){
+                        canEdit = true;
+                        $("#main-grid").data("kendoGrid").setDataSource(dataSourceGrid);
+                        $("#other-grid").data("kendoGrid").setDataSource(dataSourceGrid);
+                    }
+                    Hap.showToast({
+                        type:'success',
+                        message: $l('hap.tip.success')
+                    })
+                }else{
+                    kendo.ui.showErrorDialog({
+                        title: $l('hap.error'),
+                        width: 400,
+                        message: args.message
+                    })
+                }
+            });
+        }
+    }
+    /**
+     * 初始化orderStatus
+     */
+    function initOrderStatus(value){
+        $("#orderStatus").kendoComboBox({
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: {
+                data: orderStatusData,
+                filter:{field:"value", operator:"eq", value: value}
+            },
+            suggest: true
+        });
+        $("#orderStatus").data("kendoComboBox").select(0);
+        $("#orderStatus").data("kendoComboBox").readonly(true);
+    }
+
+    /**
+     * 切换标签页
+     * form     当前标签页前缀
+     * to       目的标签页前缀
+     */
+    function changeTab(form, to){
+        if($(to+"-nav").hasClass("active")){ return ;}
+        $(form+"-nav").removeClass("active");
+        $(form+"-grid").removeClass("active");
+        $(to+"-nav").addClass("active");
+        $(to+"-grid").addClass("active");
+        curGridEle = $(to+"-grid");
+    }
+    /**
+     * 加载订单头数据  回显订单头数据
+     */
+    function loadHeaderData(args){
+        args = args.rows[0] || {};
+        for (var k in args) {
+            viewModelHeader.model.set(k, args[k]);
+        }
+        // alert(viewModelHeader.model.headerId);
+        initOrderStatus(viewModelHeader.model.orderStatus);
+        viewModelHeader.model.set('orderMoney', formatMoney(viewModelHeader.model.orderMoney));
+        switch (viewModelHeader.model.orderStatus) {
+            case "NEW":headerNewOrRejectedStatus();break;
+            case "SUBMITED":headerSubmitedStatus();break;
+            case "APPROVED":headerApprovedStatus();break;
+            case "REJECTED":headerNewOrRejectedStatus();break;
+            default: break;
+        }
+    }
+    /**
+     * 格式化金额,ag: 13456.00
+     */
+    function formatMoney(s) {
+        var num = Number(s);
+        if( s =="" || s <= 0 || isNaN(num)) return "0.00";
+        if((s+"").indexOf(".") == -1){
+            return (num/100).toFixed(2);
+        }else{
+            return s;
+        }
+    }
+
+    /**
+     * 将元转成分
+     * eg: 1.35  to 135         1.3 to 130          1 to 100        1.355 to 1.36
+     */
+    function formatMoneyCent(s){
+        if (s == null || s == "null" || s == "")
+            return "0";
+        s = s + "";
+        var ind = s.indexOf(".");
+        var len = s.length-1;
+        if(ind == -1){
+            return s + "00";
+        }else{
+            s = s.replace(".", "");
+            if(len - ind == 0){
+                return s + "00";
+            }else if(len - ind == 1){
+                return s + "0";
+            }else if(len - ind == 2){
+                return s;
+            }else{
+                var num1 = s.charAt(ind+1);
+                var num2 = s.charAt(ind+2);
+                if(num2 >= 5){
+                    num1++;
+                }
+                return s.substr(0, ind+1) + num1;
+            }
+
+        }
+    }
+
+    /**
+     * 格式化时间
+     * @param fmt
+     * @returns {*}
+     * @constructor
+     */
+    function formatDate (data,fmt) {
+        var o = {
+            "M+": data.getMonth() + 1, //月份
+            "d+": data.getDate(), //日
+            "H+": data.getHours(), //小时
+            "m+": data.getMinutes(), //分
+            "s+": data.getSeconds(), //秒
+            "q+": Math.floor((data.getMonth() + 3) / 3), //季度
+            "S": data.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (data.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+    /**
+     * 生成订单编号
+     * @returns {string}
+     */
+    function randomOrderNumber() {
+        var res = formatDate(new Date(), "yyyyMMddHHmmssS");
+        for(var i=0;i<3;i++) {//3位随机数，用以加在时间戳后面。
+            res += Math.floor(Math.random()*10);
+        }
+        return res;
+    }
 </script>
+
+
+
+
+<!--PDF导出-->
+<style type="text/css">
+    @font-face {
+        font-family: 'DejaVu Sans';
+        src: url('${base.contextPath}/resources/font/microsoft_yahei.ttf') format('truetype');
+    }
+    #print-page {
+        width: 800px;
+        margin: 50px auto;
+        color: black;
+        font-family: MSYH, sans-serif;
+        position: absolute;
+        top: -1000px;
+        left: -1000px;
+    }
+    #print-page .title {
+        font-size: 30px;
+        font-weight: bold;
+        color: red;
+        text-align: left;
+        margin-left: 30px;
+        margin-bottom: 20px;
+        font-family: MSYH, sans-serif;
+    }
+    #print-page #header table label {
+        width: 70px;
+        text-align: right;
+    }
+    #print-page #header table input {
+        width: 120px;
+        border: 1px solid darkgrey;
+    }
+    #print-page #header table td {
+        padding-bottom: 20px;
+    }
+    #print-page #main .main-title {
+        font-size: 25px;
+        color: #00dcf8;
+        font-weight: bold;
+        margin-left: 20px;
+        margin-bottom:  20px;
+    }
+    #print-page #main table td {
+        width: 115px;
+        height: 26px;
+        line-height: 26px;
+        padding-left: 5px;
+        border-top: 1px solid black;
+        border-left: 1px solid black;
+    }
+    #print-page #main table td:last-child{
+        border-right: 1px solid black;
+    }
+    #print-page #main table tr:last-child td{
+        border-bottom: 1px solid black;
+    }
+</style>
+<script type="x/kendo-template" id="page-template">
+    <div class="page-template">
+        <table>
+            <tr>
+                <td><@spring.message "OmOrderLines.itemCode"/></td>
+                <td><@spring.message "InvInventoryItem.itemDescription"/></td>
+                <td><@spring.message "OmOrderLines.orderQuantityUom"/></td>
+                <td><@spring.message "OmOrderLines.orderdQuantity"/></td>
+                <td><@spring.message "OmOrderLines.unitSellingPrice"/></td>
+                <td><@spring.message "OmOrderLines.itemsMoney"/></td>
+            </tr>
+            # for (var i = 0; i < lines.length; i++) { #
+            <tr>
+                <td>#= lines[i].itemCode #</td>
+                <td style="width: 150px;">#= lines[i].itemDescription #</td>
+                <td>#= lines[i].orderQuantityUom #</td>
+                <td>#= lines[i].orderdQuantity #</td>
+                <td>#= lines[i].unitSellingPrice #</td>
+                <td>#= lines[i].itemsMoney #</td>
+            </tr>
+            # } #
+        </table>
+    </div>
+</script>
+<div id="print-page">
+    <div class="title">
+        <label>·PDF<@spring.message 'hap.print'/></label>
+    </div>
+    <div id="header">
+        <table>
+            <tr>
+                <td>
+                    <label><@spring.message 'OmOrderHeader.orderNumber'/>:</label>
+                    <input  type="text" data-bind="value:model.orderNumber"  />
+                </td>
+                <td>
+                    <label><@spring.message 'OrgCompany.companyName'/>:</label>
+                    <input  type="text" data-bind="value:model.companyName"  />
+                </td>
+                <td>
+                    <label><@spring.message 'ArCustomer.customerName'/>:</label>
+                    <input  type="text" data-bind="value:model.customerName"  />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label><@spring.message 'OmOrderHeader.orderDate'/>:</label>
+                    <input id="printOrderDate" type="text" data-bind="value:model.orderDate" />
+                </td>
+                <td>
+                    <label><@spring.message 'OmOrderHeader.orderMoney'/>:</label>
+                    <input  type="text" data-bind="value:model.orderMoney"  />
+                </td>
+                <td>
+                    <label><@spring.message 'OmOrderHeader.orderStatus'/>:</label>
+                    <input id="printOrderStatus" type="text" data-bind="value:model.orderStatus"  />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="main">
+        <p class="main-title">
+            <label><@spring.message 'sales.order.detail.main'/></label>
+        </p>
+        <div id="main-data">
+        </div>
+    </div>
+</div>
+<script>
+    kendo.bind($('#print-page'), viewModelHeader);
+    var printTmp = $("#printOrderDate").val();
+    $("#printOrderDate").val(printTmp.substr(0, printTmp.indexOf(" ")));
+    printTmp = $("#printOrderStatus").val();
+    for(var i = 0; i < orderStatusData.length; i++){
+        if(orderStatusData[i].value == printTmp){
+            $("#printOrderStatus").val(orderStatusData[i].meaning);
+            break;
+        }
+    }
+</script>
+
 </body>
 </html>

@@ -11,7 +11,6 @@
         <result column="START_ACTIVE_DATE" property="startActiveDate" jdbcType="DATE" />
         <result column="END_ACTIVE_DATE" property="endActiveDate" jdbcType="DATE" />
         <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR" />
+        <result column="itemsMoney" property="orderQuantityUom" jdbcType="VARCHAR" /><!--private String orderQuantityUom; //产品单位-->
     </resultMap>
-
-
 </mapper>

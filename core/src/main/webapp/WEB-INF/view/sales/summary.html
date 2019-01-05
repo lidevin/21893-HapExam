@@ -4,39 +4,48 @@
 <div id="page-content">
     <div class="col-md-12" id="query-form" style="padding-bottom:10px;">
         <div style="margin-top: 10px;line-height: 30px;height: 30px;">
-            <span class="col-md-2 text-right" style="padding-right: 0px;"><@spring.message "OrgCompany.companyName"/></span>
-            <div class="col-md-2">
-                <input id="companyId" type="text" style="width:100%;"
-                       data-bind="value:model.companyId,text:model.companyName" >
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "OrgCompany.companyName"/></span>
+                <div class="col-md-3">
+                    <input id="companyId" type="text" style="width:100%;"
+                           data-bind="value:model.companyId,text:model.companyName" >
+                </div>
             </div>
-
-            <span class="col-md-2 text-right" style="padding-right: 0px;"><@spring.message "ArCustomer.customerName"/></span>
-            <div class="col-md-2">
-                <input id="customerId" type="text" style="width:100%;"
-                       data-bind="value:model.customerId,text:model.customerName" >
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "ArCustomer.customerName"/></span>
+                <div class="col-md-3">
+                    <input id="customerId" type="text" style="width:100%;"
+                           data-bind="value:model.customerId,text:model.customerName" >
+                </div>
             </div>
-            <span class="col-md-2 text-right" style="padding-right: 10px;"><@spring.message "OmOrderHeader.orderNumber"/></span>
-            <input  type="text" class="k-textbox col-md-2"
-                    data-bind="value:model.orderNumber" >
+            <div>
+                <span class="col-md-2 text-right" style="padding-right: 10px;"><@spring.message "OmOrderHeader.orderNumber"/></span>
+                <input  type="text" class="k-textbox col-md-2"
+                        data-bind="value:model.orderNumber" >
+            </div>
         </div>
         <div style="margin-top: 10px;line-height: 30px;height: 30px;">
-            <span class="col-md-2 text-right" style="padding-right: 0px;"><@spring.message "InvInventoryItem.itemCode"/></span>
-            <div class="col-md-2">
-                <input id="inventoryItemId" type="text" style="width:100%;"
-                       data-bind="value:model.inventoryItemId,text:model.itemCode" >
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "InvInventoryItem.itemCode"/></span>
+                <div class="col-md-3">
+                    <input id="inventoryItemId" type="text" style="width:100%;"
+                           data-bind="value:model.inventoryItemId,text:model.itemCode" >
+                </div>
             </div>
-            <span class="col-md-2 text-right" style="padding-right: 0px;"><@spring.message "OmOrderHeader.orderStatus"/></span>
-            <div class="col-md-2">
-                <input id="orderStatus" data-role="combobox" data-value-primitive="true" style="width: 100%;"
-                        data-text-field="meaning" data-value-field="value"
-                        data-bind="source:orderStatusData, value: model.orderStatus">
+            <div>
+                <span class="col-md-1 text-right" style="padding-right: 0px;"><@spring.message "OmOrderHeader.orderStatus"/></span>
+                <div class="col-md-3">
+                    <input id="orderStatus" data-role="combobox" data-value-primitive="true" style="width: 100%;"
+                            data-text-field="meaning" data-value-field="value"
+                            data-bind="source:orderStatusData, value: model.orderStatus">
+                </div>
             </div>
         </div>
         <div class="col-md-12" style="margin-top: 10px">
             <div class="col-md-4 text-right">
-                <span class="btn btn-primary" style="width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
-                <span class="btn btn-primary" style="width:70px" data-bind="click:reset" type="button"><@spring.message "hap.reset"/></span>
-                <span class="btn btn-primary" style="width:70px" data-bind="click:exportExcel" type="button"><@spring.message "hap.exportExcel"/></span>
+                <span class="btn btn-default" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
+                <span class="btn btn-default" data-bind="click:reset" type="button"><@spring.message "hap.reset"/></span>
+                <span class="btn btn-default" data-bind="click:exportExcel" type="button"><@spring.message "hap.exportExcel"/></span>
             </div>
         </div>
         <div style="clear:both"></div>
@@ -53,17 +62,17 @@
     $("#companyId").kendoLov(${lovProvider.getLov(base.contextPath, base.locale,"LOV_SALES_COMPANYS")});
     $("#customerId").kendoLov(${lovProvider.getLov(base.contextPath, base.locale,"LOV_SALES_CUSTOMERS")});
     $("#inventoryItemId").kendoLov(${lovProvider.getLov(base.contextPath, base.locale,"LOV_SALES_INVENTORY")});
-    /*$("#orderStatus").kendoComboBox({
-        dataTextField: "meaning",
-        dataValueField: "value",
-        dataSource: orderStatusData
-    });*/
-   $("#link_SALES_ORDER_DETAIL").click(function () {
-        eval(parent.$("#link_SALES_ORDER_DETAIL").attr("href").replace("openTab","parent.openTab"));
+    $("#link_SALES_ORDER_DETAIL").click(function () {
+       mainTabEle.data("kendoTabStrip").closeTab("SALES_ORDER_DETAIL");
+       eval(parent.$("#link_SALES_ORDER_DETAIL").attr("href").replace("openTab","parent.openTab"));
     });
     var viewModel = Hap.createGridViewModel("#grid", {
-        orderStatusData: orderStatusData
+        orderStatusData: orderStatusData,
+        exportExcel: function () {
+            window.open("${base.contextPath}/ureport/excel?&_u=p", "_parent");
+        }
     });
+    var mainTabEle = parent.$("#mainTab");
     kendo.bind($('#page-content'), viewModel);
     Hap.initEnterQuery('#query-form', viewModel.query);
     dataSource = new kendo.data.DataSource({
@@ -91,10 +100,16 @@
             model: {
                 // id: "companyId",
                 fields: {}
+            },
+            parse: function(response) {
+                var rows = response.rows || [];
+                for (var i = 0; i < rows.length; i++) {
+                    rows[i].orderMoney = formatMoney(rows[i].orderMoney);
+                }
+                return response;
             }
         }
     });
-
     $("#grid").kendoGrid({
         dataSource: dataSource,
         resizable: true,
@@ -112,15 +127,19 @@
         },
         columns: [
             {
+                field: "headerId",
+                hidden: true
+            },
+            {
                 field: "orderNumber",
                 title: '<@spring.message "OmOrderHeader.orderNumber"/>',
                 template: function (rowData) {
-                    if (!!rowData.orderNumber) {
-                        return '<a href="javascript:void(0);" onclick="editFunctionResources('+rowdata.orderNumber +') "><@spring.message "hap.edit"/></a>';
+                    if (!!rowData.headerId) {
+                        return '<a href="javascript:editFunctionResources(\''+rowData.headerId + '\') ">' + rowData.orderNumber + '</a>';
                     }
                     return '';
                 },
-                width: 80
+                width: 120
             },
             {
                 field: "companyName",
@@ -155,29 +174,14 @@
             {
                 field: "orderMoney",
                 title: '<@spring.message "OmOrderHeader.orderMoney"/>',
-                template: function (rowData) {
-                    return formatMoney(rowData.orderMoney);
-                },
                 width: 120
             },
         ]
     });
     //编辑
-    function editFunctionResources(orderNumber) {
-        var dialog = $("#edit-dialog").kendoWindow({
-            actions: ["Close"],
-            width  : 900,
-            height : 500,
-            title  : '<@spring.message "hap.edit"/>',
-            visible: false,
-            iframe : true,
-            modal  : true,
-            content: 'order_edit.html?orderNumber=' + orderNumber,
-            close:function(e){
-                $("#grid").data("kendoGrid").dataSource.page(1);
-            }
-        }).data("kendoWindow");
-        dialog.center().open();
+    function editFunctionResources(headerId) {
+        mainTabEle.data("kendoTabStrip").closeTab("SALES_ORDER_DETAIL");
+        eval(parent.$("#link_SALES_ORDER_DETAIL").attr("href").replace("openTab","parent.openTab").replace("html","html?headerId=" + headerId));
     }
     function formatMoney(s) {
         if (/[^0-9\.]/.test(s))

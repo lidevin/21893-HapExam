@@ -5,4 +5,5 @@ import exam.core.sales.dto.OmOrderHeaders;
 
 public interface OmOrderHeadersMapper extends Mapper<OmOrderHeaders>{
 
+    public Long maxId();
 }
