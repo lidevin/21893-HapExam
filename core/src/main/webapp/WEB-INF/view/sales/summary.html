@@ -69,7 +69,12 @@
     var viewModel = Hap.createGridViewModel("#grid", {
         orderStatusData: orderStatusData,
         exportExcel: function () {
-            window.open("${base.contextPath}/ureport/excel?&_u=p", "_parent");
+            //companyId
+            //customerId
+            //orderNumber
+            //inventoryItemId
+            //orderStatus
+            window.open("${base.contextPath}/ureport/excel?&_u=database:order.ureport.xml&_i=1&_r=1", "_parent");
         }
     });
     var mainTabEle = parent.$("#mainTab");

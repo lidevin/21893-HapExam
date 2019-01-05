@@ -1,10 +1,16 @@
 <#include "../include/header.html">
 <script src="${base.contextPath}/common/code?orderStatusData=HAP_OM_ORDER_STATUS" type="text/javascript"></script>
+<style>
+   /* .k-tooltip.k-tooltip-validation.k-invalid-msg{
+        margin: 0 auto;
+        margin-top: 0px !important;
+    }*/
+</style>
 <body>
 <div id="page-content">
     <div class="col-md-12" id="header-form" data-role="validator" style="padding-bottom:10px;">
         <input type="hidden" data-bind="value:model.headerId">
-        <div style="margin-top: 10px;line-height: 30px;height: 30px;">
+        <div class="col-md-12" style="margin-top: 10px;line-height: 30px;height: 30px;">
             <div>
                 <span class="col-md-2 text-right" style="padding-right: 10px;"><@spring.message "OmOrderHeader.orderNumber"/></span>
                 <div class="col-md-2" style="padding: 0px;">
@@ -30,13 +36,13 @@
                 </div>
             </div>
         </div>
-        <div style="margin-top: 10px;margin-left: 0px ;line-height: 30px;height: 30px;">
+        <div class="col-md-12" style="margin-top: 25px;margin-left: 0px ;line-height: 30px;height: 30px;">
             <div>
                 <span class="col-md-2 text-right" style="padding-right: 10px;"><@spring.message "OmOrderHeader.orderDate"/></span>
                 <!--<input  type="date" required class="col-md-2" data-role="dateinput"
                         data-bind="value:model.orderDate" >-->
                 <div class="col-md-2" style="padding-left: 0px">
-                <input type="date" id="orderDate" autocomplete="off" data-role="datepicker"
+                <input type="date" id="orderDate" autocomplete="off" data-role="datepicker" editable="false"
                        required validationMessage='<@spring.message "OmOrderHeader.orderDateValidationMessage"/>'
                        data-bind="value:model.orderDate"  >
             </div>
@@ -57,7 +63,7 @@
             </div>
 
         </div>
-        <div class="col-md-12" style="margin-top: 10px">
+        <div class="col-md-12" style="margin-top: 20px">
             <div id="header-btn-group" class="col-md-8 text-right">
                 <span id="header-btn-save" class="btn btn-default" data-bind="click:save"><@spring.message "hap.save"/></span>
                 <span id="header-btn-submit" class="btn btn-default" data-bind="click:submit"><@spring.message "hap.submit"/></span>
@@ -120,7 +126,14 @@
         min: formatDate(new Date(2015,12, 1), "yyyy-MM-dd HH:mm:ss"),
         dateInput: true,
         format: "{0:yyyy-MM-dd}",
-        change: function(){}
+        change: function (e) {
+            var dt = e.sender;
+            var value = dt.value();
+            if (value < dt.min()) {
+                dt.value(dt.min());
+            }
+        }
+
     });
 
     $("#orderDate").data("kendoDatePicker").element[0].disabled=true;
@@ -226,6 +239,11 @@
         viewModelHeader.model.set("orderMoney", "0.00");
         headerNewOrRejectedStatus();
         $("#customerId").data("kendoLov").enable(false);
+        $("#header-btn-submit").attr("disabled", true);
+        $("#header-btn-del").attr("disabled", true);
+        $("#header-btn-approve").attr("disabled", true);
+        $("#header-btn-reject").attr("disabled", true);
+        $("#header-btn-print").attr("disabled", true);
     }
 
     dataSourceGrid = new kendo.data.DataSource({
@@ -252,17 +270,19 @@
             },
             parameterMap: function (options, type) {
                 if(canEdit == false) return {headerId:0};
+                var headerId = viewModelHeader.model.headerId || '${RequestParameters.headerId!0}';
                 if (type !== "read" && options.models) {
                     var datas = Hap.prepareSubmitParameter(options, type);
                     $.each(datas, function (i, r) {
-                        r['headerId'] = viewModelHeader.model.headerId || '${RequestParameters.headerId!0}';
+                        r['headerId'] = headerId;
                         r['companyId'] = viewModelHeader.model.companyId;
                         r['itemsMoney'] = formatMoneyCent(r['itemsMoney']);
                         r['unitSellingPrice'] = formatMoneyCent(r['unitSellingPrice']);
                     });
                     return kendo.stringify(datas);
                 } else if (type === "read") {
-                    return Hap.prepareQueryParameter({headerId: '${RequestParameters.headerId!0}'}, options)
+
+                    return Hap.prepareQueryParameter({headerId: headerId}, options)
                 }
             }
         },
@@ -624,9 +644,7 @@
         $("#companyId").data("kendoLov").enable(flag);
         $("#customerId").data("kendoLov").enable(flag);
         $("#orderDate").data("kendoDatePicker").enable(flag);
-        // $("#main-grid").data("kendoGrid").dataSource.editable = false;
         lineEdit = flag;
-        // console.log($("#main-grid").data("kendoGrid"));
     }
     /**
      * 提交订单头数据
@@ -635,12 +653,16 @@
         var data = viewModelHeader.model.toJSON();
         data.orderStatus = orderStatus || "NEW";
         if(canEdit == false){
-            data.orderDate = formatDate(data.orderDate, "yyyy-MM-dd HH:mm:ss");
             data['__status'] = 'add';
         }else{
             data['__status'] = 'update';
         }
+        if(typeof(data.orderDate) != "string"){
+            data.orderDate = formatDate(data.orderDate, "yyyy-MM-dd HH:mm:ss");
+        }
+        // alert(data.orderDate);
         var validator = $("#header-form").kendoValidator().data("kendoValidator");
+
         if (validator.validate()) {
             $.post("${base.contextPath}/sales/detail/submit", data, function (args) {
                 if(args.success){
